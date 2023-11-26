@@ -59,6 +59,40 @@ class Planet:
         y = self.y * self.SCALE + HEIGHT / 2
         pygame.draw.circle(win, self.color, (x, y), self.radius)
 
+    #defining the distance between objects
+    def attraction(self, other):
+        other_x, other_y = other.x, other.y
+        distance_x = other_x - self.x
+        distance_y = other_y - self.y
+        distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
+        
+        #defining if other object is "Sun", if it is we keep value for distance
+        if other.sun:
+            self.distance_to_sun = distance
+
+        #defining the force of attraction (Newton's law of universal gravitation)
+        force = self.G * self.mass * other.mass / distance**2
+        
+        #defining angle using Python library Math to simulate orbit
+        theta = math.atan2(distance_y, distance_x)
+        force_x = math.cos(theta) * force
+        force_y = math.sin(theta) * force
+
+        return force_x, force_y
+
+    def update_position(self, planets):
+        total_fx = total_fy = 0
+        for planet in planets:
+            if self == planet:
+                continue
+
+            fx, fy = self.attraction(planet)
+            total_fx += fx
+            total_fy += fy
+
+        #Using Newton's Second Law (F=m*a) to add velocity and update frame
+        self.x_vel += total_fx / self.mass * self.TIMESTEP
+
 def main():
     run = True
     clock = pygame.time.Clock()
