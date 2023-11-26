@@ -15,6 +15,9 @@ BLUE = (100,149,235)
 RED = (188, 39, 50)
 GREY = (80, 80, 80)
 
+#writing coordinates
+FONT = pygame.font.SysFont("comicsans", 16)
+
 pygame.display.set_caption("Planet Simulation")
 
 #planet size
@@ -70,6 +73,11 @@ class Planet:
         
         #draw planets
         pygame.draw.circle(win, self.color, (x, y), self.radius)
+
+        #draw distance markers
+        if not self.sun:
+            distance_text = FONT.render(f"{round(self.distance_to_sun/(149.6e6*1000), 3)}AU", 1, WHITE)
+            win.blit(distance_text, (x - distance_text.get_width()/2, y- distance_text.get_height()/2))
 
     #defining the distance between objects
     def attraction(self, other):
