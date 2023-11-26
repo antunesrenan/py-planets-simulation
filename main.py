@@ -59,6 +59,45 @@ class Planet:
         y = self.y * self.SCALE + HEIGHT / 2
         pygame.draw.circle(win, self.color, (x, y), self.radius)
 
+    #defining the distance between objects
+    def attraction(self, other):
+        other_x, other_y = other.x, other.y
+        distance_x = other_x - self.x
+        distance_y = other_y - self.y
+        distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
+        
+        #defining if other object is "Sun", if it is we keep value for distance
+        if other.sun:
+            self.distance_to_sun = distance
+
+        #defining the force of attraction (Newton's law of universal gravitation)
+        force = self.G * self.mass * other.mass / distance**2
+        
+        #defining angle using Python library Math to simulate orbit
+        theta = math.atan2(distance_y, distance_x)
+        force_x = math.cos(theta) * force
+        force_y = math.sin(theta) * force
+
+        return force_x, force_y
+
+    def update_position(self, planets):
+        total_fx = total_fy = 0
+        for planet in planets:
+            if self == planet:
+                continue
+
+            fx, fy = self.attraction(planet)
+            total_fx += fx
+            total_fy += fy
+
+        #Using Newton's Second Law (F=m*a) to add velocity and update frame
+        self.x_vel += total_fx / self.mass * self.TIMESTEP
+        self.y_vel += total_fy / self.mass * self.TIMESTEP
+
+        self.x += self.x_vel * self.TIMESTEP
+        self.y += self.y_vel * self.TIMESTEP
+        self.orbit.append((self.x, self.y))
+
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -67,17 +106,23 @@ def main():
     sun.sun = True
 
     mercury = Planet(0.387 * Planet.AU, 0, 8, GREY, MERCMASS)
+    mercury.y_vel = -47.4 * 1000
 
     venus = Planet(0.723 * Planet.AU, 0, 14, BEGE, VENUSMASS)
+    venus.y_vel = -35.02 * 1000
 
     earth = Planet(-1 * Planet.AU, 0, 16, BLUE, EARTHMASS)
+    earth.y_vel = 29.783 * 1000
 
     mars = Planet(-1.524 * Planet.AU, 0, 12, RED, MARSMASS)
+    mars.y_vel = 24.077 * 1000
 
     planets = [sun, mercury, venus, earth, mars]
 
     while run:
         clock.tick(60)
+        WIN.fill((0, 0, 0))
+
         #changing background color
         '''
         WIN.fill(COLOR)
@@ -88,6 +133,7 @@ def main():
                 run = False
 
         for planet in planets:
+            planet.update_position(planets)
             planet.draw(WIN)
 
         pygame.display.update()
@@ -96,5 +142,3 @@ def main():
     pygame.quit()
 
 main()
-
-
