@@ -92,6 +92,11 @@ class Planet:
 
         #Using Newton's Second Law (F=m*a) to add velocity and update frame
         self.x_vel += total_fx / self.mass * self.TIMESTEP
+        self.y_vel += total_fy / self.mass * self.TIMESTEP
+
+        self.x += self.x_vel * self.TIMESTEP
+        self.y += self.y_vel * self.TIMESTEP
+        self.orbit.append((self.x, self.y))
 
 def main():
     run = True
@@ -101,17 +106,23 @@ def main():
     sun.sun = True
 
     mercury = Planet(0.387 * Planet.AU, 0, 8, GREY, MERCMASS)
+    mercury.y_vel = 47.4 * 1000
 
     venus = Planet(0.723 * Planet.AU, 0, 14, BEGE, VENUSMASS)
+    venus.y_vel = 35.02 * 1000
 
     earth = Planet(-1 * Planet.AU, 0, 16, BLUE, EARTHMASS)
+    earth.y_vel = 29.783 * 1000
 
     mars = Planet(-1.524 * Planet.AU, 0, 12, RED, MARSMASS)
+    mars.y_vel = 24.077 * 1000
 
     planets = [sun, mercury, venus, earth, mars]
 
     while run:
         clock.tick(60)
+        WIN.fill((0, 0, 0))
+
         #changing background color
         '''
         WIN.fill(COLOR)
@@ -122,6 +133,7 @@ def main():
                 run = False
 
         for planet in planets:
+            planet.update_position(planets)
             planet.draw(WIN)
 
         pygame.display.update()
