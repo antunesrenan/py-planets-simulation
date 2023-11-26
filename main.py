@@ -96,6 +96,3 @@ def main():
     pygame.quit()
 
 main()
-
-
-#test
