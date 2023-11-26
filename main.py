@@ -106,10 +106,10 @@ def main():
     sun.sun = True
 
     mercury = Planet(0.387 * Planet.AU, 0, 8, GREY, MERCMASS)
-    mercury.y_vel = 47.4 * 1000
+    mercury.y_vel = -47.4 * 1000
 
     venus = Planet(0.723 * Planet.AU, 0, 14, BEGE, VENUSMASS)
-    venus.y_vel = 35.02 * 1000
+    venus.y_vel = -35.02 * 1000
 
     earth = Planet(-1 * Planet.AU, 0, 16, BLUE, EARTHMASS)
     earth.y_vel = 29.783 * 1000
